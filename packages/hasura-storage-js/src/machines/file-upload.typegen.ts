@@ -2,17 +2,6 @@
 
 export interface Typegen0 {
   '@@xstate/typegen': true
-  eventsCausingActions: {
-    sendDestroy: 'DESTROY'
-    addFile: 'ADD'
-    incrementProgress: 'UPLOAD_PROGRESS'
-    sendProgress: 'UPLOAD_PROGRESS'
-    resetProgress: 'UPLOAD'
-    setFileMetadata: 'UPLOAD_DONE'
-    sendDone: 'UPLOAD_DONE'
-    setError: 'UPLOAD_ERROR'
-    sendError: 'UPLOAD_ERROR'
-  }
   internalEvents: {
     'xstate.init': { type: 'xstate.init' }
   }
@@ -21,17 +10,29 @@ export interface Typegen0 {
   }
   missingImplementations: {
     actions: never
-    services: never
-    guards: never
     delays: never
+    guards: never
+    services: never
+  }
+  eventsCausingActions: {
+    addFile: 'ADD'
+    incrementProgress: 'UPLOAD_PROGRESS'
+    resetContext: 'UPLOAD'
+    resetProgress: 'UPLOAD'
+    sendDestroy: 'DESTROY'
+    sendDone: 'UPLOAD_DONE'
+    sendError: 'UPLOAD_ERROR'
+    sendProgress: 'UPLOAD_PROGRESS'
+    setError: 'UPLOAD_ERROR'
+    setFileMetadata: 'UPLOAD_DONE'
+  }
+  eventsCausingDelays: {}
+  eventsCausingGuards: {
+    hasFile: 'UPLOAD'
   }
   eventsCausingServices: {
     uploadFile: 'UPLOAD'
   }
-  eventsCausingGuards: {
-    hasFile: 'UPLOAD'
-  }
-  eventsCausingDelays: {}
-  matchesStates: 'idle' | 'uploading' | 'uploaded' | 'error' | 'stopped'
+  matchesStates: 'error' | 'idle' | 'stopped' | 'uploaded' | 'uploading'
   tags: never
 }

@@ -1,13 +1,14 @@
 # Documentation
 # https://help.github.com/en/articles/about-code-owners
 
-/packages                                @plmercereau @szilarddoro
-/packages/docgen                         @szilarddoro
-/packages/stripe-graphql-js              @elitan
-/.github                                 @plmercereau
-/docs/                                   @guicurcio @elitan
-/config/                                 @plmercereau @szilarddoro
-/examples/                               @plmercereau
-/examples/codegen-react-apollo           @elitan @plmercereau
-/examples/codegen-react-query            @elitan @plmercereau
-/examples/react-apollo-crm               @elitan @plmercereau
+/packages                                @nunopato @onehassan
+/packages/docgen                         @nunopato @onehassan
+/integrations/stripe-graphql-js          @nunopato @onehassan
+/.github                                 @nunopato @onehassan
+/dashboard/                              @nunopato @onehassan
+/docs/                                   @nunopato @onehassan
+/config/                                 @nunopato @onehassan
+/examples/                               @nunopato @onehassan
+/examples/codegen-react-apollo           @nunopato @onehassan
+/examples/codegen-react-query            @nunopato @onehassan
+/examples/react-apollo-crm               @nunopato @onehassan

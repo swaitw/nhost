@@ -1,20 +1,35 @@
-import type { AxiosResponse } from 'axios'
-
 import { NhostAuthConstructorParams } from '@nhost/hasura-auth-js'
 
-export type { NhostAuthConstructorParams }
+// TODO shared with other packages
+export interface ErrorPayload<TMessage = any> {
+  error: string
+  status: number
+  message: TMessage
+}
 
-export type BackendUrl = {
+// TODO shared with other packages
+export interface ActionErrorState {
   /**
-   * Nhost backend URL
-   * Should only be used when self-hosting
-   */
-  backendUrl: string
+   * @return `true` if an error occurred
+   * @depreacted use `!isSuccess` or `!!error` instead
+   * */
+  isError: boolean
+  /** Provides details about the error */
+  error: ErrorPayload | null
+}
+
+// TODO shared with other packages
+export interface ActionLoadingState {
   /**
-   * When set, the admin secret is sent as a header, `x-hasura-admin-secret`,
-   * for all requests to GraphQL, Storage, and Serverless Functions.
+   * @return `true` when the action is executing, `false` when it finished its execution.
    */
-  adminSecret?: string
+  isLoading: boolean
+}
+
+// TODO shared with other packages
+export interface ActionSuccessState {
+  /** Returns `true` if the action is successful. */
+  isSuccess: boolean
 }
 
 export type Subdomain = {
@@ -36,34 +51,20 @@ export type Subdomain = {
   adminSecret?: string
 }
 
-export type BackendOrSubdomain = BackendUrl | Subdomain
+export type ServiceUrls = {
+  authUrl?: string
+  graphqlUrl?: string
+  storageUrl?: string
+  functionsUrl?: string
+}
 
 export interface NhostClientConstructorParams
-  extends Partial<BackendUrl>,
-    Partial<Subdomain>,
-    Omit<NhostAuthConstructorParams, 'url'> {}
-
-export type GraphqlRequestResponse<T = unknown> =
-  | {
-      data: null
-      error: Error | object | object[]
-    }
-  | {
-      data: T
-      error: null
-    }
-
-export type FunctionCallResponse<T = unknown> =
-  | {
-      res: AxiosResponse<T>
-      error: null
-    }
-  | {
-      res: null
-      error: Error
-    }
-
-export interface GraphqlResponse<T = object> {
-  errors?: object[]
-  data?: T
+  extends Partial<Subdomain>,
+    Partial<ServiceUrls>,
+    Omit<NhostAuthConstructorParams, 'url' | 'broadcastKey'> {
+  /**
+   * When set, the admin secret is sent as a header, `x-hasura-admin-secret`,
+   * for all requests to GraphQL, Storage, and Serverless Functions.
+   */
+  adminSecret?: string
 }

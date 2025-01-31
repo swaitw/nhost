@@ -1,51 +1,95 @@
 import { NhostClientConstructorParams } from './types'
 
-const LOCALHOST_REGEX = /^localhost(:\d+)*$/g
+// a port can be a number or a placeholder string with leading and trailing double underscores, f.e. "8080" or "__PLACEHOLDER_NAME__"
+export const LOCALHOST_REGEX =
+  /^((?<protocol>http[s]?):\/\/)?(?<host>(localhost|local))(:(?<port>(\d+|__\w+__)))?$/
 
 /**
- * `backendUrl` should now be used only when self-hosting
- * `subdomain` and `region` should be used instead when using the Nhost platform
- * `
- * @param backendOrSubdomain
+ * \`subdomain\` and `region` should be used when running the Nhost platform
+ *
+ * @param subdomainAndRegion
  * @param service
  * @returns
  */
-export function urlFromParams(
-  backendOrSubdomain: Pick<NhostClientConstructorParams, 'region' | 'subdomain' | 'backendUrl'>,
+export function urlFromSubdomain(
+  subdomainAndRegion: Pick<NhostClientConstructorParams, 'region' | 'subdomain'>,
   service: string
-) {
-  const { backendUrl, subdomain, region } = backendOrSubdomain
+): string {
+  const { subdomain, region } = subdomainAndRegion
 
-  if (!backendUrl && !subdomain) {
-    throw new Error('Either `backendUrl` or `subdomain` must be set.')
-  }
-
-  if (backendUrl) {
-    return `${backendUrl}/v1/${service}`
-  }
-
-  // to make TS happy
   if (!subdomain) {
-    throw new Error('`subdomain` must be set if `backendUrl` is not set.')
+    throw new Error('A `subdomain` must be set.')
   }
 
-  // check if subdomain is localhost[:port]
+  // check if subdomain is [http[s]://]localhost[:port] or [http[s]://]local[:port]
   const subdomainLocalhostFound = subdomain.match(LOCALHOST_REGEX)
-  if (subdomainLocalhostFound && subdomainLocalhostFound.length > 0) {
-    const localhostFound = subdomainLocalhostFound[0]
+  if (subdomainLocalhostFound?.groups) {
+    const { protocol, host, port } = subdomainLocalhostFound.groups
 
-    // no port specified, use standard port 1337
-    if (localhostFound === 'localhost') {
-      return `http://localhost:1337/v1/${service}`
+    const urlFromEnv = getValueFromEnv(service)
+    if (urlFromEnv) {
+      return urlFromEnv
     }
 
-    // port specified
-    return `http://${localhostFound}/v1/${service}`
+    if (host === 'localhost') {
+      console.warn(
+        'The `subdomain` is set to "localhost". Support for this will be removed in a future release. Please use "local" instead.'
+      )
+
+      return `${protocol || 'http'}://localhost:${port || 1337}/v1/${service}`
+    }
+
+    return port
+      ? `${protocol || 'https'}://local.${service}.nhost.run:${port}/v1`
+      : `${protocol || 'https'}://local.${service}.nhost.run/v1`
   }
 
   if (!region) {
-    throw new Error('`region` must be set when using a `subdomain` other than "localhost".')
+    throw new Error('`region` must be set when using a `subdomain` other than "local".')
   }
 
   return `https://${subdomain}.${service}.${region}.nhost.run/v1`
+}
+
+/**
+ *
+ * @returns whether the code is running in a browser
+ */
+function isBrowser(): boolean {
+  return typeof window !== 'undefined'
+}
+
+/**
+ *
+ * @returns whether the code is running in a Node.js environment
+ */
+function environmentIsAvailable() {
+  return typeof process !== 'undefined' && process.env
+}
+
+/**
+ *
+ * @param service auth | storage | graphql | functions
+ * @returns the service's url if the corresponding env var is set
+ * NHOST_${service}_URL
+ */
+function getValueFromEnv(service: string) {
+  if (isBrowser() || !environmentIsAvailable()) {
+    return null
+  }
+
+  return process.env[`NHOST_${service.toUpperCase()}_URL`]
+}
+
+/**
+ * Combines a base URL and a path into a single URL string.
+ *
+ * @param baseUrl - The base URL to use.
+ * @param path - The path to append to the base URL.
+ * @returns The combined URL string.
+ */
+export function buildUrl(baseUrl: string, path: string) {
+  const hasLeadingSlash = path.startsWith('/')
+  const urlPath = hasLeadingSlash ? path : `/${path}`
+  return baseUrl + urlPath
 }

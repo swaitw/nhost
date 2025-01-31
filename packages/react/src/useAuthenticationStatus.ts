@@ -1,3 +1,4 @@
+import { ErrorPayload } from '@nhost/nhost-js'
 import { useSelector } from '@xstate/react'
 
 import { useAuthInterpreter } from './useAuthInterpreter'
@@ -10,7 +11,13 @@ import { useAuthInterpreter } from './useAuthInterpreter'
  * const { isAuthenticated, isLoading } = useAuthenticationStatus();
  * ```
  */
-export const useAuthenticationStatus = () => {
+export const useAuthenticationStatus = (): {
+  isAuthenticated: boolean
+  isLoading: boolean
+  error: ErrorPayload | null
+  isError: boolean
+  connectionAttempts: number
+} => {
   const service = useAuthInterpreter()
   return useSelector(
     service,
@@ -18,8 +25,12 @@ export const useAuthenticationStatus = () => {
       isAuthenticated: state.matches({ authentication: 'signedIn' }),
       isLoading: state.hasTag('loading'),
       error: state.context.errors.authentication || null,
-      isError: state.matches({ authentication: { signedOut: 'failed' } })
+      isError: state.matches({ authentication: { signedOut: 'failed' } }),
+      connectionAttempts: state.context.importTokenAttempts
     }),
-    (a, b) => a.isAuthenticated === b.isAuthenticated && a.isLoading === b.isLoading
+    (a, b) =>
+      a.isAuthenticated === b.isAuthenticated &&
+      a.isLoading === b.isLoading &&
+      a.connectionAttempts === b.connectionAttempts
   )
 }

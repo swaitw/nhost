@@ -2,36 +2,36 @@
 
 export interface Typegen0 {
   '@@xstate/typegen': true
-  eventsCausingActions: {
-    addItem: 'UPLOAD' | 'ADD'
-    removeItem: 'REMOVE'
-    clearList: 'CLEAR'
-    incrementProgress: 'UPLOAD_PROGRESS'
-    cancel: 'CANCEL'
-    resetProgress: 'CLEAR' | 'CANCEL'
-    resetLoaded: 'CLEAR' | 'CANCEL' | 'UPLOAD'
-    resetTotal: 'CLEAR' | 'CANCEL' | 'UPLOAD'
-    upload: 'UPLOAD'
-    startProgress: 'UPLOAD'
-    setUploaded: 'UPLOAD_DONE' | 'UPLOAD_ERROR'
-  }
   internalEvents: {
     'xstate.init': { type: 'xstate.init' }
   }
   invokeSrcNameMap: {}
   missingImplementations: {
     actions: never
-    services: never
-    guards: never
     delays: never
+    guards: never
+    services: never
   }
-  eventsCausingServices: {}
+  eventsCausingActions: {
+    addItem: 'ADD' | 'UPLOAD'
+    cancel: 'CANCEL'
+    clearList: 'CLEAR'
+    incrementProgress: 'UPLOAD_PROGRESS'
+    removeItem: 'REMOVE'
+    resetLoaded: 'CANCEL' | 'CLEAR' | 'UPLOAD' | 'xstate.init'
+    resetProgress: 'CANCEL' | 'CLEAR' | 'UPLOAD' | 'xstate.init'
+    resetTotal: 'CANCEL' | 'CLEAR' | 'UPLOAD' | 'xstate.init'
+    setUploaded: 'UPLOAD_DONE' | 'UPLOAD_ERROR'
+    startProgress: 'UPLOAD'
+    upload: 'UPLOAD'
+  }
+  eventsCausingDelays: {}
   eventsCausingGuards: {
     hasFileToDownload: 'UPLOAD'
     isAllUploaded: 'UPLOAD_DONE' | 'UPLOAD_ERROR'
     isAllUploadedOrError: 'UPLOAD_DONE' | 'UPLOAD_ERROR'
   }
-  eventsCausingDelays: {}
-  matchesStates: 'idle' | 'uploading' | 'uploaded' | 'error'
+  eventsCausingServices: {}
+  matchesStates: 'error' | 'idle' | 'uploaded' | 'uploading'
   tags: never
 }
