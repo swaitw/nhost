@@ -1,6 +1,6 @@
 {
   "name": "@nhost/vue",
-  "version": "0.4.6",
+  "version": "2.9.1",
   "description": "Nhost Vue library",
   "license": "MIT",
   "keywords": [
@@ -34,6 +34,7 @@
     "./package.json": "./package.json",
     ".": {
       "import": {
+        "types": "./dist/index.d.ts",
         "node": "./dist/index.cjs.js",
         "default": "./dist/index.esm.js"
       },
@@ -64,21 +65,18 @@
     "vue": "^3.2.31"
   },
   "dependencies": {
-    "@nhost/core": "workspace:*",
     "@nhost/nhost-js": "workspace:*",
-    "@vueuse/core": "^8.9.2",
-    "@xstate/vue": "^1.0.0",
-    "immer": "^9.0.12",
-    "jwt-decode": "^3.1.2"
+    "@vueuse/core": "^10.9.0",
+    "@xstate/vue": "^2.0.0",
+    "jwt-decode": "^4.0.0"
   },
   "devDependencies": {
     "@nhost/docgen": "workspace:*",
-    "@nhost/hasura-auth-js": "workspace:*",
-    "@vitejs/plugin-vue": "^2.3.1",
-    "@xstate/inspect": "^0.6.2",
-    "vue": "^3.2.37",
-    "vue-router": "^4.1.2",
-    "ws": "^8.4.2",
-    "xstate": "^4.32.1"
+    "@vitejs/plugin-vue": "^4.6.2",
+    "@xstate/inspect": "^0.8.0",
+    "vue": "^3.4.21",
+    "vue-router": "^4.3.0",
+    "ws": "^8.16.0",
+    "xstate": "^4.38.3"
   }
 }

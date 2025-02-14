@@ -1,8 +1,12 @@
+import {
+  encodeQueryParameters,
+  Provider,
+  ProviderOptions,
+  rewriteRedirectTo
+} from '@nhost/nhost-js'
 import { reactive } from 'vue'
-
-import { encodeQueryParameters, Provider, ProviderOptions, rewriteRedirectTo } from '@nhost/core'
-
 import { NestedRefOfValue, nestedUnref } from './helpers'
+import { useAccessToken } from './useAccessToken'
 import { useNhostClient } from './useNhostClient'
 
 /**
@@ -11,6 +15,14 @@ import { useNhostClient } from './useNhostClient'
  * @example
  * ```js
  * const providerLink = useProviderLink();
+ * ```
+ *
+ * @example
+ *
+ *  Pass in the `connect` option to connect the user's account to the OAuth provider when different emails are used.
+ *
+ * ```js
+ * const providerLink = useProviderLink({ connect: true });
  * ```
  *
  * @example
@@ -29,15 +41,25 @@ import { useNhostClient } from './useNhostClient'
  * };
  * ```
  */
-export const useProviderLink = (options?: NestedRefOfValue<ProviderOptions | undefined>) => {
+export const useProviderLink = (
+  options?: NestedRefOfValue<ProviderOptions | undefined>
+): Record<Provider, string> => {
   const { nhost } = useNhostClient()
+  const accessToken = useAccessToken()
+
   return reactive(
     new Proxy({} as Record<Provider, string>, {
       get(_, provider: string) {
         const optionsValue = nestedUnref(options)
+
+        const connectOptions = optionsValue?.connect ? { connect: accessToken.value } : {}
+
         return encodeQueryParameters(
           `${nhost.auth.client.backendUrl}/signin/provider/${provider}`,
-          rewriteRedirectTo(nhost.auth.client.clientUrl, optionsValue as any)
+          rewriteRedirectTo(nhost.auth.client.clientUrl, {
+            ...optionsValue,
+            ...connectOptions
+          } as any)
         )
       }
     })

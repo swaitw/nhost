@@ -1,14 +1,12 @@
-import { ToRefs, unref } from 'vue'
-
 import {
   SignInEmailPasswordHandlerResult,
   signInEmailPasswordPromise,
   SignInEmailPasswordState,
   SignInMfaTotpHandlerResult,
   signInMfaTotpPromise
-} from '@nhost/core'
+} from '@nhost/nhost-js'
 import { useSelector } from '@xstate/vue'
-
+import { ToRefs, unref } from 'vue'
 import { RefOrValue } from './helpers'
 import { useAuthenticated } from './useAuthenticated'
 import { useAuthInterpreter } from './useAuthInterpreter'
@@ -58,6 +56,8 @@ export const useSignInEmailPassword = (): SignInEmailPasswordResult => {
 
   const accessToken = useSelector(service.value, (state) => state.context.accessToken.value)
 
+  const refreshToken = useSelector(service.value, (state) => state.context.refreshToken.value)
+
   const error = useError('authentication')
 
   const isSuccess = useAuthenticated()
@@ -93,6 +93,7 @@ export const useSignInEmailPassword = (): SignInEmailPasswordResult => {
 
   return {
     accessToken,
+    refreshToken,
     error,
     isError,
     isLoading,

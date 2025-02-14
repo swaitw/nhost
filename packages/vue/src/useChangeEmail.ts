@@ -1,14 +1,12 @@
-import { ToRefs, unref } from 'vue'
-
 import {
   ChangeEmailHandlerResult,
   ChangeEmailOptions,
   changeEmailPromise,
   ChangeEmailState,
   createChangeEmailMachine
-} from '@nhost/core'
+} from '@nhost/nhost-js'
 import { useInterpret, useSelector } from '@xstate/vue'
-
+import { ToRefs, unref } from 'vue'
 import { NestedRefOfValue, nestedUnref, RefOrValue } from './helpers'
 import { useNhostClient } from './useNhostClient'
 
@@ -31,9 +29,7 @@ export interface ChangeEmailComposableResult extends ToRefs<ChangeEmailState> {
  * const handleFormSubmit = async (e) => {
  *   e.preventDefault();
  *
- *   await changeEmail({
- *     email: 'new@example.com',
- *   })
+ *   await changeEmail('new@example.com')
  * }
  * ```
  *

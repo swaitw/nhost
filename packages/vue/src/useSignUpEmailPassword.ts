@@ -1,19 +1,17 @@
-import { computed, ToRefs, unref } from 'vue'
-
 import {
   SignUpEmailPasswordHandlerResult,
   signUpEmailPasswordPromise,
   SignUpEmailPasswordState,
   SignUpOptions
-} from '@nhost/core'
+} from '@nhost/nhost-js'
 import { useSelector } from '@xstate/vue'
-
+import { ToRefs, unref } from 'vue'
 import { NestedRefOfValue, nestedUnref, RefOrValue } from './helpers'
 import { useAccessToken } from './useAccessToken'
-import { useAuthenticationStatus } from './useAuthenticationStatus'
 import { useAuthInterpreter } from './useAuthInterpreter'
 import { useError } from './useError'
 import { useUserData } from './useUserData'
+
 interface SignUpEmailPasswordResult extends ToRefs<SignUpEmailPasswordState> {
   /** Used for a new user to sign up. Returns a promise with the current context */
   signUpEmailPassword(
@@ -67,7 +65,10 @@ export const useSignUpEmailPassword = (
   const needsEmailVerification = useSelector(service.value, (state) =>
     state.matches('registration.incomplete.needsEmailVerification')
   )
+
   const accessToken = useAccessToken()
+  const refreshToken = useSelector(service.value, (state) => state.context.refreshToken.value)
+
   const user = useUserData()
   const signUpEmailPassword = (
     email: RefOrValue<string>,
@@ -87,6 +88,7 @@ export const useSignUpEmailPassword = (
     error,
     needsEmailVerification,
     accessToken,
+    refreshToken,
     user
   }
 }
